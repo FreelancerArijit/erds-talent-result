@@ -172,10 +172,10 @@ html {
 
 .service-card {
     display: flex;
-    justify-content: space-evenly;    
+    justify-content: space-evenly;
     padding: 20px;
     flex-wrap: wrap;
-    
+
 }
 
 .card-body {
@@ -194,7 +194,7 @@ html {
 
 }
 
-.card-body:hover{
+.card-body:hover {
     transform: scale(1.07);
     transition: all linear 0.4s;
 }
@@ -211,7 +211,7 @@ html {
 
 }
 
-.card-heading h5{
+.card-heading h5 {
     font-size: 18px;
 
 }
@@ -258,7 +258,7 @@ html {
     border-radius: 10px;
 }
 
-marquee{
+marquee {
     background-color: var(--text-color);
     padding: 4px;
     color: red;
@@ -273,8 +273,7 @@ footer {
     text-align: center;
     display: flex;
     flex-direction: column;
-    position: absolute;
-    bottom: 0;
+
 
 }
 
@@ -295,7 +294,7 @@ footer {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    
+
 }
 
 .brand-name img {
@@ -313,14 +312,14 @@ footer {
 
 }
 
-.address{
+.address {
     /* background-color: red; */
     font-size: 14px;
     border-top: 1px solid gray;
-padding-top: 4px;
+    padding-top: 4px;
 }
 
-.address span{
+.address span {
     font-weight: bold;
     color: var(--text-color);
 }
@@ -331,6 +330,7 @@ padding-top: 4px;
     border-top: 1px solid gray;
     padding-top: 10px;
 }
+
 /* Contact page */
 
 .contact-section {
@@ -370,7 +370,7 @@ p {
     cursor: pointer;
 }
 
-.form-body{
+.form-body {
     max-width: 600px;
 }
 
@@ -423,10 +423,10 @@ p {
     display: flex;
     flex-direction: row;
     /* background-color: red; */
-   justify-content: space-evenly;
+    justify-content: space-evenly;
     padding-top: 20px;
-    
-    
+
+
 }
 
 .result-body .result-col {
@@ -454,7 +454,7 @@ p {
     text-align: center;
     display: flex;
     align-items: center;
-    
+
 }
 
 .result-body .result-col .result-card .btn {
@@ -475,18 +475,18 @@ p {
 
 /* About page */
 
-.about-banner{
+.about-banner {
     margin-top: 120px;
     max-width: 100%;
 }
 
-.about-banner img{
+.about-banner img {
     max-width: 100%;
     height: 200px;
-    
+
 }
 
-.certifications{
+.certifications {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -494,14 +494,14 @@ p {
     gap: 20px;
 }
 
-.certificates{
+.certificates {
     display: flex;
     align-items: center;
-    justify-content:  space-around;
-gap: 45px;
+    justify-content: space-around;
+    gap: 45px;
 }
 
-.certificates-card{
+.certificates-card {
     max-width: 450px;
     padding: 15px;
     border-radius: 8px;
@@ -509,104 +509,110 @@ gap: 45px;
 
 }
 
-.certificates-card #second-cert{
+.certificates-card #second-cert {
     max-width: 350px;
-     height: 510px;
+    height: 510px;
 }
 
-.certificates-card #first-cert{
+.certificates-card #first-cert {
     height: 510px;
-     max-width: 420px;
+    max-width: 420px;
 }
 
 /* Exam details */
 
-.exam-details{
+.exam-details {
     padding-top: 18px;
     padding-bottom: 10px;
 }
-.exam-details h4{
+
+.exam-details h4 {
     text-align: center;
 
 }
 
-.exam-description{
+.exam-description {
     padding: 30px;
     font-size: 16px;
     line-height: 40px;
 }
 
-.exam-description ul li{
-    list-style:disc;
+.exam-description ul li {
+    list-style: disc;
 }
 
-.syllabus-body h5{
+.syllabus-body h5 {
     text-align: center;
 }
 
-.syllabus-content{
+.syllabus-content {
     display: flex;
     padding: 10px;
     /* align-items: center; */
     justify-content: space-between;
 }
 
-.grade h5{
+.grade h5 {
     text-align: center;
 }
 
 table {
-      max-width: 1000px;
-      min-width: 300px;
-      border-collapse: collapse;
-      margin: 10px auto;
-      font-size: 15px;
-    }
-    th, td {
-      border: 1px solid #444;
-      padding: 5px;
-      text-align: center;
-    }
-    th {
-      background-color: var(--primary-color);
-      color: white;
-    }
-    td {
-      background-color: #f2f2f2;
-    }
-    caption {
-      font-size: 1.2em;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
+    max-width: 1000px;
+    min-width: 300px;
+    border-collapse: collapse;
+    margin: 10px auto;
+    font-size: 15px;
+}
+
+th,
+td {
+    border: 1px solid #444;
+    padding: 5px;
+    text-align: center;
+}
+
+th {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+td {
+    background-color: #f2f2f2;
+}
+
+caption {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
 
 
 @media screen and (max-width: 850px) {
 
     body {
-    overflow-x: hidden;
-  }
+        overflow-x: hidden;
+    }
 
-  .navbar {
-    flex-direction: column;
-    align-items: center;
-    height: auto;
-  }
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+    }
 
-  .nav-logo,
-  .nav-menu {
-    width: 100%;
-    justify-content: center;
-  }
+    .nav-logo,
+    .nav-menu {
+        width: 100%;
+        justify-content: center;
+    }
 
-  .nav-menu ul {
-    padding-top: 25px;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-  }
+    .nav-menu ul {
+        padding-top: 25px;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
 
-    marquee{
+    marquee {
         margin-top: 120px;
     }
 
@@ -623,33 +629,33 @@ table {
     }
 
     .services {
-        padding:0;
+        padding: 0;
         padding-top: 20px;
         max-width: 100%;
         margin: auto;
     }
 
-    .service-card{
+    .service-card {
         gap: 20px;
         padding-left: 0;
         padding-right: 0;
     }
 
-    .about-banner{
+    .about-banner {
         margin-top: 230px;
     }
 
-    .certifications{
+    .certifications {
         margin-top: 25px;
     }
 
-    .certificates{
+    .certificates {
         flex-wrap: wrap;
         margin-top: 8px;
 
     }
 
-    
+
 
     .gallery {
         padding: 15px;
@@ -657,6 +663,9 @@ table {
 
     footer {
         max-width: 100%;
+        position: absolute;
+        bottom: 0;
+        left: 0;
     }
 
     .contact-section-main {
@@ -675,7 +684,7 @@ table {
         padding-left: 80px;
     }
 
-    textarea{
+    textarea {
         max-width: 90%;
         /* padding: 5px 35px; */
     }
@@ -686,11 +695,12 @@ table {
         max-width: 100%;
     }
 
-    .result-body{
+    .result-body {
         flex-wrap: wrap;
     }
 
-    .syllabus-content{
-        flex-direction: column;;
+    .syllabus-content {
+        flex-direction: column;
+        ;
     }
 }
