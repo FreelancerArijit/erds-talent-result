@@ -41,17 +41,17 @@ document.addEventListener("keydown", e => {
 });
 
 // Detect DevTools (deterrent only)
-setInterval(() => {
-  if (
-    window.outerWidth - window.innerWidth > 160 ||
-    window.outerHeight - window.innerHeight > 160
-  ) {
-    document.body.innerHTML = `
-      <h2 style="text-align:center;margin-top:20%;font-family:sans-serif">
-        Inspect Disabled
-      </h2>
-    `;
-  }
-}, 1000);
+// setInterval(() => {
+//   if (
+//     window.outerWidth - window.innerWidth > 160 ||
+//     window.outerHeight - window.innerHeight > 160
+//   ) {
+//     document.body.innerHTML = `
+//       <h2 style="text-align:center;margin-top:20%;font-family:sans-serif">
+//         Inspect Disabled
+//       </h2>
+//     `;
+//   }
+// }, 1000);
 
 
