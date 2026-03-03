@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel – ERDS Result Upload</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="shortcut icon" href="./images/erds-logo.png" type="image/x-icon">
+    <style>
+        :root{--p:#05056E;--s:#4d4dd5;--a:#F8D825;}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Segoe UI',sans-serif;background:#f0f0f8;min-height:100vh;}
+
+        /* ── LOGIN ── */
+        #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#05056E,#4d4dd5);}
+        .lcard{background:white;border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 20px 50px rgba(0,0,0,.3);}
+        .lcard-logo{text-align:center;margin-bottom:24px;}
+        .lcard-logo img{width:70px;margin-bottom:10px;}
+        .lcard-logo h2{color:var(--p);font-size:1.5rem;font-weight:700;}
+        .lcard-logo p{color:#666;font-size:.85rem;}
+        .lf{margin-bottom:16px;}
+        .lf label{font-size:.88rem;font-weight:600;display:block;margin-bottom:5px;color:#333;}
+        .lf input{width:100%;border:1.5px solid #ddd;border-radius:8px;padding:10px 14px;font-size:.95rem;}
+        .lf input:focus{border-color:var(--s);outline:none;}
+        .btn-login{background:var(--p);color:white;width:100%;padding:12px;border-radius:8px;border:none;font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s;}
+        .btn-login:hover{background:var(--s);}
+
+        /* ── DASHBOARD ── */
+        #dash{display:none;}
+        .topbar{background:var(--p);color:white;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+        .tb-brand{display:flex;align-items:center;gap:12px;}
+        .tb-brand img{width:40px;}
+        .tb-brand span{font-size:1.1rem;font-weight:700;color:var(--a);}
+        .tb-user{display:flex;align-items:center;gap:16px;font-size:.9rem;}
+        .tb-user a{color:#ccc;text-decoration:none;cursor:pointer;}
+        .tb-user a:hover{color:white;}
+
+        .tabs{background:white;border-bottom:1px solid #e0e0f0;padding:0 24px;display:flex;overflow-x:auto;}
+        .tab{padding:14px 22px;cursor:pointer;font-size:.92rem;color:#555;border-bottom:3px solid transparent;font-weight:500;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:all .2s;}
+        .tab:hover{color:var(--p);}
+        .tab.active{color:var(--p);border-bottom-color:var(--p);font-weight:700;}
+
+        .body{max-width:1100px;margin:28px auto;padding:0 20px;}
+        .panel{display:none;}
+        .panel.active{display:block;}
+
+        /* ── CARDS ── */
+        .card-box{background:white;border-radius:14px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(5,5,110,.08);}
+        .card-box h4{color:var(--p);margin-bottom:20px;font-size:1.15rem;font-weight:700;padding-bottom:12px;border-bottom:2px solid #f0f0f8;}
+
+        /* ── THREE MAIN FIELDS ── */
+        .three-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+        @media(max-width:700px){.three-fields{grid-template-columns:1fr;}}
+        .field label{font-size:.88rem;font-weight:700;color:#333;display:block;margin-bottom:6px;}
+        .field label span{color:#dc3545;}
+        .field select,.field input{width:100%;border:1.5px solid #ddd;border-radius:8px;padding:10px 14px;font-size:.92rem;color:#333;background:white;transition:border .2s;}
+        .field select:focus,.field input:focus{border-color:var(--s);outline:none;box-shadow:0 0 0 3px rgba(77,77,213,.1);}
+
+        /* ── DROP ZONE ── */
+        .dropzone{border:2.5px dashed #b0b0d8;border-radius:12px;padding:36px 20px;text-align:center;cursor:pointer;background:#f8f8ff;transition:all .2s;margin-bottom:20px;}
+        .dropzone:hover,.dropzone.over{border-color:var(--s);background:#ededfc;}
+        .dropzone i{font-size:2.4rem;color:var(--s);margin-bottom:10px;display:block;}
+        .dropzone p{color:#555;font-size:.95rem;margin:0;}
+        .dropzone span{color:var(--s);font-weight:700;text-decoration:underline;}
+        .dropzone small{color:#888;font-size:.8rem;display:block;margin-top:6px;}
+        #fileInput{display:none;}
+
+        /* ── FILE LIST ── */
+        .flist-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+        .flist-hdr h6{margin:0;font-weight:700;color:#333;font-size:.92rem;}
+        .flist-hdr button{background:none;border:none;color:#dc3545;cursor:pointer;font-size:.85rem;font-weight:600;}
+        .fitem{display:flex;align-items:center;gap:10px;background:#f8f8ff;border-radius:8px;padding:10px 14px;margin-bottom:7px;border:1px solid #e8e8f8;}
+        .fitem-icon{font-size:1.3rem;}
+        .fitem-icon.pdf-c{color:#cc0000;}
+        .fitem-icon.word-c{color:#2b579a;}
+        .fitem-icon.xls-c{color:#217346;}
+        .fitem-name{flex:1;font-size:.87rem;color:#333;word-break:break-all;}
+        /* Per-file center name input */
+        .fitem-center{border:1.5px solid #ddd;border-radius:6px;padding:5px 10px;font-size:.82rem;width:200px;flex-shrink:0;}
+        .fitem-center:focus{border-color:var(--s);outline:none;}
+        .fitem-size{font-size:.78rem;color:#888;white-space:nowrap;}
+        .fitem-rm{background:none;border:none;color:#dc3545;cursor:pointer;font-size:.85rem;padding:0;}
+
+        /* ── UPLOAD BTN ── */
+        .btn-upload{background:var(--p);color:white;border:none;border-radius:10px;padding:12px 32px;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .2s;}
+        .btn-upload:hover{background:var(--s);}
+        .btn-upload:disabled{background:#aaa;cursor:not-allowed;}
+        .uprog{background:#f0f0f8;border-radius:10px;height:10px;margin:14px 0;display:none;overflow:hidden;}
+        .uprog-bar{height:100%;background:linear-gradient(90deg,var(--p),var(--s));transition:width .3s;border-radius:10px;}
+        .fb-ok{display:flex;align-items:center;gap:8px;background:#d4edda;border-radius:8px;padding:8px 14px;margin-bottom:6px;font-size:.88rem;}
+        .fb-err{display:flex;align-items:center;gap:8px;background:#f8d7da;border-radius:8px;padding:8px 14px;margin-bottom:6px;font-size:.88rem;}
+
+        /* ── MANAGE TABLE ── */
+        .tbl-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;}
+        .tbl-bar h4{color:var(--p);margin:0;}
+        .tbl-filters{display:flex;gap:10px;flex-wrap:wrap;}
+        .tbl-filters select{border:1.5px solid #ddd;border-radius:8px;padding:7px 12px;font-size:.85rem;color:#333;}
+        .btn-del-bulk{background:#dc3545;color:white;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:.85rem;font-weight:600;display:none;align-items:center;gap:6px;}
+        .btn-ref{background:#e8e8f8;border:none;border-radius:8px;padding:8px 14px;cursor:pointer;font-size:.85rem;font-weight:600;color:var(--p);}
+        table{width:100%;border-collapse:collapse;font-size:.87rem;}
+        th{background:#f0f0f8;color:var(--p);font-weight:700;padding:11px 10px;text-align:left;}
+        td{padding:10px 10px;border-bottom:1px solid #f0f0f8;vertical-align:middle;}
+        tr:hover td{background:#fafaff;}
+        .sbadge{padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;}
+        .s-pub{background:#d4edda;color:#155724;}
+        .s-dft{background:#fff3cd;color:#856404;}
+        .dist-tag{background:#e8e8f8;color:var(--p);padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;}
+        .act{display:flex;gap:6px;}
+        .btn-v{background:#e8e8f8;color:var(--p);border:none;border-radius:6px;padding:5px 11px;cursor:pointer;font-size:.8rem;font-weight:600;}
+        .btn-d{background:#f8d7da;color:#dc3545;border:none;border-radius:6px;padding:5px 11px;cursor:pointer;font-size:.8rem;font-weight:600;}
+        .btn-v:hover{background:var(--p);color:white;}
+        .btn-d:hover{background:#dc3545;color:white;}
+
+        /* ── STAT CARDS ── */
+        .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:24px;}
+        .scard{background:white;border-radius:12px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(5,5,110,.07);border-top:4px solid var(--p);}
+        .snum{font-size:2rem;font-weight:700;color:var(--p);}
+        .slbl{font-size:.83rem;color:#666;margin-top:4px;}
+
+        /* ── TOAST ── */
+        #toast{position:fixed;bottom:24px;right:24px;background:#333;color:white;padding:12px 22px;border-radius:10px;font-size:.9rem;z-index:9999;display:none;box-shadow:0 4px 15px rgba(0,0,0,.3);}
+        #toast.success{background:#155724;}
+        #toast.error{background:#721c24;}
+    </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+    <div class="lcard">
+        <div class="lcard-logo">
+            <img src="./images/erds-logo.png" alt="ERDS">
+            <h2>ERDS Admin</h2>
+            <p>Result Upload Panel</p>
+        </div>
+        <div id="loginErr" class="alert alert-danger" style="display:none;border-radius:8px;font-size:.88rem;"></div>
+        <div class="lf">
+            <label>Email</label>
+            <input type="email" id="lemail" placeholder="admin@erds.com" />
+        </div>
+        <div class="lf">
+            <label>Password</label>
+            <input type="password" id="lpwd" placeholder="Password" />
+        </div>
+        <button class="btn-login" onclick="doLogin()">
+            <i class="fas fa-sign-in-alt"></i> <span id="lbtxt">Login</span>
+        </button>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dash">
+    <div class="topbar">
+        <div class="tb-brand">
+            <img src="./images/erds-logo.png" alt="">
+            <span>ERDS Admin Panel</span>
+        </div>
+        <div class="tb-user">
+            <span><i class="fas fa-user-circle"></i> <span id="adminName"></span></span>
+            <a onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('upload',this)"><i class="fas fa-upload"></i> Upload Results</button>
+        <button class="tab" onclick="switchTab('manage',this)"><i class="fas fa-list"></i> Manage Results</button>
+        <button class="tab" onclick="switchTab('stats',this)"><i class="fas fa-chart-bar"></i> Dashboard</button>
+    </div>
+
+    <div class="body">
+
+        <!-- ══ UPLOAD PANEL ══ -->
+        <div class="panel active" id="panel-upload">
+            <div class="card-box">
+                <h4><i class="fas fa-cloud-upload-alt" style="margin-right:8px;"></i>Upload Result PDFs</h4>
+
+                <!-- THREE MAIN FIELDS -->
+                <div class="three-fields">
+                    <div class="field">
+                        <label>District <span>*</span></label>
+                        <select id="upDistrict">
+                            <option value="">-- Select District --</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Academic Year <span>*</span></label>
+                        <select id="upYear">
+                            <option value="">-- Select Year --</option>
+                            <option value="2025-26">2025-26</option>
+                            <option value="2024-25">2024-25</option>
+                            <option value="2023-24">2023-24</option>
+                            <option value="2022-23">2022-23</option>
+                            <option value="2021-22">2021-22</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Publish Status</label>
+                        <select id="upPublish">
+                            <option value="true">Published (visible to students)</option>
+                            <option value="false">Draft (hidden)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <p style="font-size:.82rem;color:#888;margin-bottom:14px;">
+                    <i class="fas fa-info-circle" style="color:var(--s);"></i>
+                    Each file you upload = one center. The filename is used as the center name — you can edit it below after selecting files.
+                </p>
+
+                <!-- DROP ZONE -->
+                <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-file-upload"></i>
+                    <p>Drag & drop center PDF files here or <span>browse</span></p>
+                    <small>Select multiple files at once — each file is one center result &nbsp;|&nbsp; Max 50MB per file</small>
+                    <small style="color:#4d4dd5;margin-top:4px;">⚡ Word & Excel files are automatically converted to PDF</small>
+                </div>
+                <input type="file" id="fileInput" multiple accept=".doc,.docx,.xls,.xlsx,.pdf" onchange="onFiles(this.files)" />
+
+                <!-- FILE LIST with editable center names -->
+                <div id="fileListWrap" style="display:none;">
+                    <div class="flist-hdr">
+                        <h6 id="fcount">0 files selected</h6>
+                        <button onclick="clearFiles()"><i class="fas fa-trash"></i> Clear All</button>
+                    </div>
+                    <div id="fileItems"></div>
+                </div>
+
+                <!-- Progress + Button -->
+                <div class="uprog" id="uprog"><div class="uprog-bar" id="uprogBar" style="width:0%"></div></div>
+                <button class="btn-upload" id="upBtn" onclick="doUpload()" disabled>
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span id="upBtnTxt">Upload Center Results</span>
+                </button>
+                <div id="feedback" style="margin-top:14px;"></div>
+            </div>
+        </div>
+
+        <!-- ══ MANAGE PANEL ══ -->
+        <div class="panel" id="panel-manage">
+            <div class="card-box">
+                <div class="tbl-bar">
+                    <h4><i class="fas fa-list"></i> All Uploaded Results</h4>
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                        <div class="tbl-filters">
+                            <select id="mDistrict" onchange="loadManage()">
+                                <option value="">All Districts</option>
+                            </select>
+                            <select id="mYear" onchange="loadManage()">
+                                <option value="">All Years</option>
+                                <option value="2025-26">2025-26</option>
+                                <option value="2024-25">2024-25</option>
+                                <option value="2023-24">2023-24</option>
+                                <option value="2022-23">2022-23</option>
+                            </select>
+                        </div>
+                        <button class="btn-del-bulk" id="bulkBtn" onclick="doBulkDelete()">
+                            <i class="fas fa-trash"></i> Delete Selected
+                        </button>
+                        <button class="btn-ref" onclick="loadManage()"><i class="fas fa-sync"></i> Refresh</button>
+                    </div>
+                </div>
+                <div id="manageTable">
+                    <div style="text-align:center;padding:40px;color:#888;">
+                        <div class="spinner-border text-primary"></div>
+                        <p style="margin-top:12px;">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ STATS PANEL ══ -->
+        <div class="panel" id="panel-stats">
+            <div class="stats" id="statsGrid">
+                <div class="scard"><div class="snum" id="st1">–</div><div class="slbl">Total Centers Uploaded</div></div>
+                <div class="scard"><div class="snum" id="st2">–</div><div class="slbl">Published</div></div>
+                <div class="scard"><div class="snum" id="st3">–</div><div class="slbl">Drafts</div></div>
+                <div class="scard"><div class="snum" id="st4">–</div><div class="slbl">Total Downloads</div></div>
+            </div>
+            <div class="card-box">
+                <h4><i class="fas fa-clock"></i> Recent Uploads</h4>
+                <div id="recentList"><p style="color:#888;text-align:center;padding:20px;">Loading...</p></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="./js/api.js"></script>
+<script>
+const WB_DISTRICTS = [
+  'Alipurduar','Bankura','Birbhum','Cooch Behar','Dakshin Dinajpur',
+  'Darjeeling','Hooghly','Howrah','Jalpaiguri','Jhargram',
+  'Kalimpong','Kolkata','Malda','Murshidabad','Nadia',
+  'North 24 Parganas','Paschim Bardhaman','Paschim Medinipur',
+  'Purba Bardhaman','Purba Medinipur','Purulia',
+  'South 24 Parganas','Uttar Dinajpur'
+];
+
+let selFiles = [];
+let selIds   = new Set();
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+window.onload = () => {
+    // Populate district dropdowns
+    const opts = WB_DISTRICTS.map(d => `<option value="${d}">${d}</option>`).join('');
+    document.getElementById('upDistrict').innerHTML += opts;
+    document.getElementById('mDistrict').innerHTML  += opts;
+
+    if (localStorage.getItem('erds_admin_token')) showDash();
+};
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+async function doLogin() {
+    const email = document.getElementById('lemail').value.trim();
+    const pwd   = document.getElementById('lpwd').value;
+    const err   = document.getElementById('loginErr');
+    err.style.display = 'none';
+    document.getElementById('lbtxt').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+    try {
+        const data = await apiPost('/auth/login', { email, password: pwd });
+        if (data.success) {
+            localStorage.setItem('erds_admin_token', data.token);
+            localStorage.setItem('erds_admin_name', data.admin.name);
+            showDash();
+        } else {
+            err.textContent = data.message || 'Login failed';
+            err.style.display = 'block';
+        }
+    } catch(e) {
+        err.textContent = 'Cannot reach backend. Is it running? (cd backend && npm start)';
+        err.style.display = 'block';
+    } finally {
+        document.getElementById('lbtxt').innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+    }
+}
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('lpwd').addEventListener('keypress', e => { if(e.key==='Enter') doLogin(); });
+});
+function showDash() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dash').style.display = 'block';
+    document.getElementById('adminName').textContent = localStorage.getItem('erds_admin_name') || 'Admin';
+    loadStats();
+}
+function doLogout() {
+    localStorage.removeItem('erds_admin_token');
+    localStorage.removeItem('erds_admin_name');
+    location.reload();
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function switchTab(name, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-'+name).classList.add('active');
+    btn.classList.add('active');
+    if (name === 'manage') loadManage();
+    if (name === 'stats')  loadStats();
+}
+
+// ── FILE HANDLING ─────────────────────────────────────────────────────────────
+function onFiles(files) {
+    selFiles = [...selFiles, ...Array.from(files)].slice(0, 20);
+    renderFiles();
+}
+function renderFiles() {
+    const wrap = document.getElementById('fileListWrap');
+    const items = document.getElementById('fileItems');
+    const btn   = document.getElementById('upBtn');
+    if (!selFiles.length) { wrap.style.display='none'; btn.disabled=true; return; }
+    wrap.style.display = 'block';
+    btn.disabled = false;
+    document.getElementById('fcount').textContent = selFiles.length + ' file(s) selected — edit center names below:';
+    items.innerHTML = selFiles.map((f,i) => {
+        const ext  = f.name.split('.').pop().toLowerCase();
+        const cls  = ext==='pdf' ? 'pdf-c' : (ext.includes('xls') ? 'xls-c' : 'word-c');
+        const icon = ext==='pdf' ? 'fa-file-pdf' : (ext.includes('xls') ? 'fa-file-excel' : 'fa-file-word');
+        const defaultName = f.name.replace(/\.[^.]+$/,'').replace(/[_-]+/g,' ').trim();
+        const size = (f.size/1024/1024).toFixed(2);
+        return `<div class="fitem">
+            <i class="fas ${icon} fitem-icon ${cls}"></i>
+            <span class="fitem-name" title="${esc(f.name)}">${esc(f.name)}</span>
+            <input class="fitem-center" id="cname_${i}" value="${esc(defaultName)}" placeholder="Center name" title="Center name for this file" />
+            <span class="fitem-size">${size} MB</span>
+            <button class="fitem-rm" onclick="removeFile(${i})" title="Remove"><i class="fas fa-times"></i></button>
+        </div>`;
+    }).join('');
+}
+function removeFile(i) { selFiles.splice(i,1); document.getElementById('fileInput').value=''; renderFiles(); }
+function clearFiles()  { selFiles=[]; document.getElementById('fileInput').value=''; renderFiles(); document.getElementById('feedback').innerHTML=''; }
+
+// Drag & drop
+const dz = document.getElementById('dropzone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('over'); onFiles(e.dataTransfer.files); });
+
+// ── UPLOAD ────────────────────────────────────────────────────────────────────
+async function doUpload() {
+    const district = document.getElementById('upDistrict').value;
+    const year     = document.getElementById('upYear').value;
+    if (!district) { toast('Please select a district', 'error'); return; }
+    if (!year)     { toast('Please select an academic year', 'error'); return; }
+    if (!selFiles.length) return;
+
+    const btn = document.getElementById('upBtn');
+    const fb  = document.getElementById('feedback');
+    btn.disabled = true;
+    document.getElementById('upBtnTxt').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+    document.getElementById('uprog').style.display = 'block';
+    fb.innerHTML = '';
+
+    let p = 0;
+    const timer = setInterval(() => { p = Math.min(p+3,85); document.getElementById('uprogBar').style.width=p+'%'; }, 200);
+
+    try {
+        const fd = new FormData();
+        selFiles.forEach((f,i) => {
+            fd.append('files', f);
+            // Pass per-file center name
+            const cname = document.getElementById('cname_'+i)?.value.trim() || f.name.replace(/\.[^.]+$/,'');
+            fd.append(`center_${f.name}`, cname);
+        });
+        fd.append('district',    district);
+        fd.append('academicYear', year);
+        fd.append('isPublished', document.getElementById('upPublish').value);
+
+        const res  = await fetch(API_BASE + '/results/upload', {
+            method: 'POST',
+            headers: { Authorization: 'Bearer ' + localStorage.getItem('erds_admin_token') },
+            body: fd,
+        });
+        const data = await res.json();
+        clearInterval(timer);
+        document.getElementById('uprogBar').style.width = '100%';
+
+        if (data.success) {
+            toast(`✅ ${data.data.length} center(s) uploaded for ${district}!`, 'success');
+            fb.innerHTML = data.data.map(r =>
+                `<div class="fb-ok">
+                    <i class="fas fa-check-circle" style="color:green;"></i>
+                    <strong>${esc(r.centerName)}</strong> — ${esc(r.district)} &nbsp;·&nbsp; ${esc(r.academicYear)}
+                    <a href="${API_BASE.replace('/api','')+r.pdfUrl}" target="_blank" style="margin-left:auto;color:green;font-size:.82rem;"><i class="fas fa-eye"></i> View PDF</a>
+                </div>`
+            ).join('') + (data.errors||[]).map(e =>
+                `<div class="fb-err"><i class="fas fa-exclamation-circle" style="color:red;"></i><strong>${esc(e.file)}</strong>: ${esc(e.error)}</div>`
+            ).join('');
+            clearFiles();
+        } else {
+            fb.innerHTML = `<div class="fb-err"><i class="fas fa-times-circle" style="color:red;"></i> ${esc(data.message)}</div>`;
+            toast('Upload failed', 'error');
+        }
+    } catch(e) {
+        clearInterval(timer);
+        fb.innerHTML = `<div class="fb-err"><i class="fas fa-times-circle" style="color:red;"></i> Server error. Is the backend running?</div>`;
+        toast('Connection error', 'error');
+    } finally {
+        btn.disabled = false;
+        document.getElementById('upBtnTxt').innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload Center Results';
+        setTimeout(() => { document.getElementById('uprog').style.display='none'; document.getElementById('uprogBar').style.width='0%'; }, 1500);
+    }
+}
+
+// ── MANAGE TABLE ──────────────────────────────────────────────────────────────
+async function loadManage() {
+    const t  = document.getElementById('manageTable');
+    const d  = document.getElementById('mDistrict').value;
+    const y  = document.getElementById('mYear').value;
+    t.innerHTML = '<div style="text-align:center;padding:40px;color:#888;"><div class="spinner-border text-primary"></div><p style="margin-top:12px;">Loading...</p></div>';
+    selIds.clear(); updateBulkBtn();
+    try {
+        const token  = localStorage.getItem('erds_admin_token');
+        const params = new URLSearchParams({ limit: 200 });
+        if (d) params.set('district', d);
+        if (y) params.set('academicYear', y);
+        const data = await apiGet('/results/admin/all?' + params, token);
+        if (!data.success || !data.data.length) {
+            t.innerHTML = '<p style="text-align:center;color:#888;padding:30px;">No results found.</p>';
+            return;
+        }
+        const rows = data.data.map(r => {
+            const date   = new Date(r.createdAt).toLocaleDateString('en-IN');
+            const status = r.isPublished
+                ? '<span class="sbadge s-pub">Published</span>'
+                : '<span class="sbadge s-dft">Draft</span>';
+            const pdfUrl = API_BASE.replace('/api','') + r.pdfFile.url;
+            return `<tr>
+                <td><input type="checkbox" data-id="${r._id}" onchange="toggleSel('${r._id}',this.checked)"></td>
+                <td><span class="dist-tag">${esc(r.district)}</span></td>
+                <td>${esc(r.centerName)}</td>
+                <td>${esc(r.academicYear)}</td>
+                <td>${date}</td>
+                <td>${status}</td>
+                <td><div class="act">
+                    <button class="btn-v" onclick="window.open('${pdfUrl}','_blank')"><i class="fas fa-eye"></i> View</button>
+                    <button class="btn-d" onclick="delOne('${r._id}','${esc(r.centerName).replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+                </div></td>
+            </tr>`;
+        }).join('');
+        t.innerHTML = `<div style="overflow-x:auto;"><table>
+            <thead><tr>
+                <th><input type="checkbox" onchange="selAll(this)"></th>
+                <th>District</th><th>Center Name</th><th>Year</th><th>Uploaded</th><th>Status</th><th>Actions</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+        </table></div>`;
+    } catch(e) {
+        t.innerHTML = '<p style="text-align:center;color:red;padding:30px;">Failed to load. Is backend running?</p>';
+    }
+}
+
+function toggleSel(id, checked) { if(checked) selIds.add(id); else selIds.delete(id); updateBulkBtn(); }
+function selAll(cb) {
+    selIds.clear();
+    document.querySelectorAll('#manageTable tbody input[type=checkbox]').forEach(c => {
+        c.checked = cb.checked;
+        if (cb.checked && c.dataset.id) selIds.add(c.dataset.id);
+    });
+    updateBulkBtn();
+}
+function updateBulkBtn() {
+    const b = document.getElementById('bulkBtn');
+    if (selIds.size > 0) { b.style.display='flex'; b.innerHTML=`<i class="fas fa-trash"></i> Delete (${selIds.size})`; }
+    else b.style.display='none';
+}
+async function delOne(id, name) {
+    if (!confirm(`Delete "${name}"? Cannot be undone.`)) return;
+    const data = await apiDelete('/results/' + id);
+    if (data.success) { toast('Deleted', 'success'); loadManage(); }
+    else toast('Error: ' + data.message, 'error');
+}
+async function doBulkDelete() {
+    if (!selIds.size) return;
+    if (!confirm(`Delete ${selIds.size} result(s)? Cannot be undone.`)) return;
+    const res = await fetch(API_BASE + '/results/bulk-delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('erds_admin_token') },
+        body: JSON.stringify({ ids: [...selIds] }),
+    });
+    const data = await res.json();
+    if (data.success) { toast(data.message, 'success'); loadManage(); }
+    else toast('Bulk delete failed', 'error');
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────────
+async function loadStats() {
+    try {
+        const data = await apiGet('/admin/dashboard', localStorage.getItem('erds_admin_token'));
+        if (!data.success) return;
+        const s = data.data.stats;
+        document.getElementById('st1').textContent = s.totalResults;
+        document.getElementById('st2').textContent = s.publishedResults;
+        document.getElementById('st3').textContent = s.unpublishedResults;
+        document.getElementById('st4').textContent = s.totalDownloads;
+
+        const rec = data.data.recentUploads;
+        document.getElementById('recentList').innerHTML = !rec.length
+            ? '<p style="color:#888;text-align:center;">No uploads yet</p>'
+            : `<table style="width:100%;font-size:.88rem;">
+                <thead><tr><th>Center Name</th><th>District</th><th>Year</th><th>Date</th><th>Status</th></tr></thead>
+                <tbody>${rec.map(r=>`<tr>
+                    <td>${esc(r.centerName||r.title||'')}</td>
+                    <td><span class="dist-tag">${esc(r.district||'')}</span></td>
+                    <td>${esc(r.academicYear||'')}</td>
+                    <td>${new Date(r.createdAt).toLocaleDateString('en-IN')}</td>
+                    <td>${r.isPublished?'<span class="sbadge s-pub">Published</span>':'<span class="sbadge s-dft">Draft</span>'}</td>
+                </tr>`).join('')}</tbody>
+              </table>`;
+    } catch(e) {
+        document.getElementById('recentList').innerHTML = '<p style="color:red;text-align:center;">Could not load.</p>';
+    }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function toast(msg, type='success') {
+    const t = document.getElementById('toast');
+    t.textContent=msg; t.className=type; t.style.display='block';
+    setTimeout(()=>t.style.display='none', 3500);
+}
+function esc(s){ return s?(s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''; }
+</script>
+</body>
+</html>

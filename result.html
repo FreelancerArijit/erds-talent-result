@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<<<<<<< HEAD
+=======
+
+>>>>>>> e05e199332899e9476d4c8d7f177a21a0b17fcfe
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<<<<<<< HEAD
+    <title>Check ERDS Talent Results – Search by Candidate</title>
+    <meta name="description" content="Search and view ERDS Talent Exam results district wise. Download official result PDFs from the ERDS Talent Result portal." />
+    <link rel="canonical" href="https://talenterds.netlify.app/result.html" />
+=======
+   <title>Check ERDS Talent Results – Search by Candidate</title>
+<meta name="description" content="Search and view ERDS Talent Exam results by candidate details. Get accurate scores and verified information through the ERDS Talent Result portal." />
+<link rel="canonical" href="https://talenterds.netlify.app/result.html" />
+>>>>>>> e05e199332899e9476d4c8d7f177a21a0b17fcfe
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="shortcut icon" href="./images/erds-logo.png" type="image/x-icon" sizes="32x32">
+<<<<<<< HEAD
+    <style>
+        /* ── Year selector bar ── */
+        .year-bar {
+            background: #05056E;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .year-bar label { color: #F8D825; font-weight: 700; font-size: .95rem; margin: 0; }
+        .year-bar select {
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: .95rem;
+            font-weight: 600;
+            color: #05056E;
+            cursor: pointer;
+            min-width: 140px;
+        }
+
+        /* ── Districts grid ── */
+        .districts-section {
+            padding: 36px 20px 60px;
+            background: #f4f4fb;
+        }
+        .districts-section h2 {
+            text-align: center;
+            color: #05056E;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .districts-section .sub {
+            text-align: center;
+            color: #777;
+            font-size: .88rem;
+            margin-bottom: 32px;
+        }
+
+        /* District card */
+        .districts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .district-card {
+            background: #05056E;
+            color: white;
+            border-radius: 12px;
+            padding: 20px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background .2s, transform .2s, box-shadow .2s;
+            border: 2px solid transparent;
+            text-decoration: none;
+        }
+        .district-card:hover {
+            background: #4d4dd5;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(5,5,110,.25);
+            color: white;
+            text-decoration: none;
+        }
+        .district-card.active {
+            background: white;
+            color: #05056E;
+            border-color: #05056E;
+            box-shadow: 0 4px 16px rgba(5,5,110,.2);
+        }
+        .district-card .dname {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .district-card .dcount {
+            background: rgba(255,255,255,.2);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: .78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .district-card.active .dcount {
+            background: #e8e8f8;
+            color: #05056E;
+        }
+        .district-card.no-result {
+            opacity: .45;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        /* ── Center PDFs drawer ── */
+        .centers-drawer {
+            background: white;
+            border-radius: 14px;
+            padding: 28px;
+            margin-top: 24px;
+            box-shadow: 0 4px 20px rgba(5,5,110,.1);
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+        }
+        .centers-drawer.open { display: block; }
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .drawer-header h3 {
+            color: #05056E;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .drawer-header .close-drawer {
+            background: #f0f0f8;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 14px;
+            cursor: pointer;
+            color: #555;
+            font-size: .85rem;
+            font-weight: 600;
+        }
+        .drawer-header .close-drawer:hover { background: #e0e0f0; }
+
+        /* Center PDF cards */
+        .centers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+        .center-card {
+            background: #f8f8ff;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #e0e0f0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: box-shadow .2s, transform .2s;
+        }
+        .center-card:hover {
+            box-shadow: 0 4px 14px rgba(5,5,110,.12);
+            transform: translateY(-2px);
+        }
+        .center-card-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .cicon {
+            width: 38px;
+            height: 38px;
+            background: #ffecec;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .cicon i { color: #cc0000; font-size: 1.1rem; }
+        .cname {
+            font-size: .92rem;
+            font-weight: 700;
+            color: #05056E;
+            margin: 0;
+            line-height: 1.4;
+        }
+        .cmeta { font-size: .76rem; color: #999; }
+        .cdownload {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            background: #05056E;
+            color: white;
+            padding: 9px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: .85rem;
+            font-weight: 700;
+            transition: background .2s;
+            margin-top: auto;
+        }
+        .cdownload:hover { background: #4d4dd5; color: white; text-decoration: none; }
+
+        /* States */
+        .state-box {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+        .state-box .spinner-border { color: #05056E; }
+        .state-box i { font-size: 2.5rem; color: #ccc; margin-bottom: 12px; display: block; }
+
+        @media(max-width:600px) {
+            .districts-grid { grid-template-columns: 1fr 1fr; }
+            .centers-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+=======
+    <title>ERDS</title>
+</head>
+
+<body>
+>>>>>>> e05e199332899e9476d4c8d7f177a21a0b17fcfe
+    <!-- Header -->
+    <header class="navbar">
+        <div class="nav-logo">
+            <img src="./images/erds-logo.png" alt="" class="src">
+            <div>
+                <h1>ERDS</h1>
+                <span>Educational Research and Developement Society</span>
+            </div>
+        </div>
+<<<<<<< HEAD
+        <div class="nav-menu">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="result.html" style="color:#F8D825;">Results</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+                <li><span class="navbar-toggler-icon"></span></li>
+            </ul>
+        </div>
+    </header>
+
+    <marquee behavior="" direction="">
+        <h6>Talent Search Scholarship Examination Scholars List <span class="currentyear"></span></h6>
+    </marquee>
+
+    <!-- Year selector -->
+    <div class="year-bar">
+        <label><i class="fas fa-calendar-alt"></i> Academic Year:</label>
+        <select id="yearSelect" onchange="onYearChange()">
+            <option value="">Loading...</option>
+        </select>
+    </div>
+
+    <!-- Districts + Centers -->
+    <section class="districts-section">
+        <h2><i class="fas fa-map-marker-alt" style="color:#cc0000;margin-right:8px;"></i>Results by District</h2>
+        <p class="sub">Click a district to view and download center-wise result PDFs</p>
+
+        <!-- District cards grid -->
+        <div class="districts-grid" id="districtsGrid">
+            <div class="state-box" style="grid-column:1/-1;">
+                <div class="spinner-border" role="status"></div>
+                <p style="margin-top:12px;font-size:.9rem;">Loading districts...</p>
+            </div>
+        </div>
+
+        <!-- Center PDFs drawer (appears below grid) -->
+        <div class="centers-drawer" id="centersDrawer">
+            <div class="drawer-header">
+                <h3 id="drawerTitle"><i class="fas fa-map-marker-alt" style="color:#cc0000;margin-right:6px;"></i></h3>
+                <button class="close-drawer" onclick="closeDrawer()"><i class="fas fa-times"></i> Close</button>
+            </div>
+            <div id="centersGrid">
+                <div class="state-box">
+                    <div class="spinner-border" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+=======
+
+        <div class="nav-menu">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="result.html">Results</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+                <li> <span class="navbar-toggler-icon"></span></li>
+
+
+            </ul>
+        </div>
+
+    </header>
+
+    <marquee behavior="" direction="">
+        <h6>Talent Search Scholarhip Examination Scholars List <span id="currentyear"></span></h6>
+    </marquee>
+
+
+    <!-- Result section -->
+    <section class="result-section">
+        <div class="result-heading">
+            <h4>Results</h4>
+            <h4>Talent Search Scholarhip Examination <span id="currentyear"></span></h4>
+        </div>
+        <div class="result-body">
+
+            <div class="result-col">
+                <a href="https://drive.google.com/drive/folders/1PXbVBb7RoBwbxGMGe402vtF7SIu60gbN" target="_blank">
+                    <div class="result-card">
+                        <h5>Bankura</h5>
+                    </div>
+                </a>
+                <div class="result-card">
+                    <a href="https://drive.google.com/drive/folders/1nXnjkzhDX9FUVuZDlCN77PgXiyi1-VZi" target="_blank">
+                        <h5>Hooghly</h5>
+                    </a>
+                </div>
+                <div class="result-card">
+                    <a href="https://drive.google.com/drive/folders/1tEwqFhhNdEo7fdSNrEJfX4vq5fLUwDof" target="_blank">
+                    <h5>Howrah</h5>
+                    </a>
+                </div>
+                <div class="result-card">
+                    <a href="redirect.html?url=https://drive.google.com/drive/folders/1irUconw9-d8fGba2_NNmybCn4yn1UuFQ" target="_blank">
+                    <h5>Purba Burdwan </h5>
+                    </a>
+                </div>
+                <div class="result-card">
+                    <a href="https://drive.google.com/drive/u/5/folders/1Bdrx4SHK8NbU2sFqMWdeH9gCakE8dfm1" target="_blank">
+                    <h5>Pasch Burdwan </h5>
+                    </a>
+                </div>
+
+            </div>
+
+            <div class="result-col">
+                <div class="result-card">
+                    <a href="https://drive.google.com/drive/u/5/folders/1OhDDrgzBAF3KwVWsq1XMGYG7jXlV5TGe" target="_blank" >
+                    <h5>Birbhum </h5>
+                    </a>
+                </div>
+                <div class="result-card">
+                    <a href="https://drive.google.com/drive/u/5/folders/1VMGT9aqlXbFxT0saaP178AtNoKeVZ1Tu" target="_blank">
+                    <h5>Coochbihar </h5>
+                    </a>
+                </div>
+                <div class="result-card">
+                    <a href="https://drive.google.com/drive/u/5/folders/1gTl9EdCfZ5csA-NBN4c28OIKaIES9_93" target="_blank">
+                    <h5>Alipurduar </h5>
+                    </a>
+                </div>
+                <div class="result-card">
+                    <a href="https://drive.google.com/drive/u/5/folders/1V8eO5uGUgmapOM2OpZX5kLZvKGDRmu39" target="_blank">
+                    <h5>Jhargram </h5>
+                    </a>
+                </div>
+                <div class="result-card">
+                    <a href="https://drive.google.com/drive/u/5/folders/1Vq-tfttrdglJW0-KHd5hKdR_LgnzaY-a" target="_blank">
+                    <h5>Pash Medinipur </h5>
+                    </a>
+                </div>
+            </div>
+
+            <div class="result-col">
+                <div class="result-card">
+                    <a href="https://drive.google.com/drive/u/5/folders/17Fxfq7zevx5j6YunEUGbtgtjlz0AdaAn" target="_blank" >
+                    <h5>Purba Medinipur </span></h5>
+                    </a>
+                </div>
+                <div class="result-card">
+                    <a href="https://drive.google.com/drive/u/5/folders/1JXu9qQLXSgDKxnlYUK8Q7ZwTbubVsUkr" target="_blank">
+                    <h5>Purulia </h5>
+                    </a>
+                </div>
+                <div class="result-card">
+                    <a href="https://drive.google.com/drive/u/5/folders/1Ec-3fmLMhwrnP-UuWBnB82am5jIIP2Ni" target="_blank">
+                    <h5>Mursidabad</h5>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+
+
+
+
+>>>>>>> e05e199332899e9476d4c8d7f177a21a0b17fcfe
+    <footer>
+        <div class="footer-body">
+            <div class="brand-name">
+                <img src="./images/erds-logo.png" alt="" class="src">
+<<<<<<< HEAD
+                <div><h6>Educational Research and development Society</h6></div>
+            </div>
+            <div class="foooter-right">
+                <div class="contact">
+                    <p>Contact no:<br>
+                        <a href="tel:+919609347900">+91 9609347900</a><br>
+                        <a href="tel:+919735880073">+91 9735880073</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="address">
+            <p>Address:<br>
+                <span>Registered office:</span> Bengai Sarat Vidyapith Building (2nd Floor), Hooghly, West Bengal. |
+                <span>Sub office:</span> Puncha Harimandirtala, Puncha, Purulia |
+                <span>Sub office:</span> Khagrabari (Chowmatha), Coochbehar
+            </p>
+        </div>
+        <div class="copyright">
+            @2025 ERDS (Educational Research and Development Society). All rights reserved.
+            Developed and maintained by <a href="https://bento.me/arijit-chattopadhyay" target="_blank">Arijit Chattopadhyay.</a>
+        </div>
+=======
+                <div>
+                    <h6>Educational Research and development Society</h6>
+                </div>
+            </div>
+            <div class="foooter-right">
+                <div class="contact">
+                    <p>Contact no: <br>
+                        <a href="tel:+919609347900">+91 9609347900</a><br>
+                        <a href="tel:+919735880073">+91 9735880073</a> <br>
+
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="address">
+            <p> Address: <br>
+                <span>Registered office: </span> Bengai Sarat Vidyapith Building (2nd Floor), Hooghly, West Bengal. |
+                <span>Sub office: </span> Puncha Harimandirtala, Puncha, Purulia |
+                <span>Sub office: </span> Khagrabari (Chowmatha), Coochbehar
+            </p>
+        </div>
+
+        <div class="copyright">
+            @2025 ERDS (Educational Research and Development Society). All rights reserved.
+            Developed and maintained by <a href="https://bento.me/arijit-chattopadhyay" target="_blank"> Arijit
+                Chattopadhyay. </a>
+        </div>
+
+
+>>>>>>> e05e199332899e9476d4c8d7f177a21a0b17fcfe
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<<<<<<< HEAD
+    <script src="./config.js"></script>
+    <script src="./js/script.js"></script>
+    <script src="./js/api.js"></script>
+    <script>
+    const ALL_DISTRICTS = [
+    'Alipurduar',
+    'Bankura',
+    'Birbhum',
+    'Coochbihar',
+    'Hooghly',
+    'Howrah',
+    'Jhargram',
+    'Pasch Burdwan',
+    'Pash Medinipur',
+    'Purba Burdwan',
+    'Purba Medinipur',
+    'Purulia'
+];
+
+    let activeDistrict = null;
+    let activeYear     = '';
+    let districtCounts = {}; // district → center count
+
+    document.querySelectorAll('.currentyear').forEach(el => el.textContent = new Date().getFullYear());
+
+    // ── Boot ──────────────────────────────────────────────────────────────────
+    async function init() {
+        try {
+            // Load available academic years
+            const ydata = await apiGet('/results/years');
+            const years = ydata.success ? ydata.data : [];
+
+            const sel = document.getElementById('yearSelect');
+            if (years.length === 0) {
+                sel.innerHTML = '<option value="">No results yet</option>';
+            } else {
+                sel.innerHTML = years.map(y =>
+                    `<option value="${y}">${y}</option>`
+                ).join('');
+                activeYear = years[0];
+            }
+            await loadDistricts();
+        } catch(e) {
+            document.getElementById('districtsGrid').innerHTML = `
+                <div class="state-box" style="grid-column:1/-1;">
+                    <i class="fas fa-exclamation-triangle" style="color:#dc3545;"></i>
+                    <h6 style="color:#555;">Backend not reachable</h6>
+                    <p style="font-size:.85rem;">Start the backend server first</p>
+                    <button onclick="init()" style="background:#05056E;color:white;border:none;border-radius:8px;padding:8px 18px;cursor:pointer;margin-top:8px;">Retry</button>
+                </div>`;
+        }
+    }
+
+    async function onYearChange() {
+        activeYear = document.getElementById('yearSelect').value;
+        activeDistrict = null;
+        closeDrawer();
+        await loadDistricts();
+    }
+
+    // ── Load district cards ───────────────────────────────────────────────────
+    async function loadDistricts() {
+        const grid = document.getElementById('districtsGrid');
+        grid.innerHTML = `<div class="state-box" style="grid-column:1/-1;"><div class="spinner-border" role="status"></div></div>`;
+
+        try {
+            // Get which districts have results for this year
+            const params = activeYear ? `?academicYear=${encodeURIComponent(activeYear)}` : '';
+            const ddata  = await apiGet('/results/districts' + params);
+            const hasResults = new Set(ddata.success ? ddata.data : []);
+
+            // Get center counts per district
+            if (activeYear) {
+                const rdata = await apiGet('/results?academicYear=' + encodeURIComponent(activeYear) + '&limit=500');
+                districtCounts = {};
+                if (rdata.success) {
+                    rdata.data.forEach(r => {
+                        districtCounts[r.district] = (districtCounts[r.district] || 0) + 1;
+                    });
+                }
+            }
+
+            grid.innerHTML = ALL_DISTRICTS.map(d => {
+                const has   = hasResults.has(d);
+                const count = districtCounts[d] || 0;
+                const badge = has ? `<span class="dcount">${count} center${count!==1?'s':''}</span>` : `<span class="dcount">No results</span>`;
+                return `<div class="district-card ${!has?'no-result':''} ${activeDistrict===d?'active':''}"
+                    onclick="${has?`selectDistrict('${d.replace(/'/g,"\\'")}')`:''}"
+                    title="${has?'Click to view results':'No results uploaded yet'}">
+                    <span class="dname">${d}</span>
+                    ${badge}
+                </div>`;
+            }).join('');
+
+        } catch(e) {
+            grid.innerHTML = `<div class="state-box" style="grid-column:1/-1;"><i class="fas fa-exclamation-triangle" style="color:#dc3545;"></i><p>Failed to load districts</p></div>`;
+        }
+    }
+
+    // ── Select a district → navigate to resultView.html ─────────────────────────────────
+    function selectDistrict(district) {
+        const params = new URLSearchParams({
+            district: district,
+            academicYear: activeYear
+        });
+        window.location.href = `resultView.html?${params.toString()}`;
+    }
+
+    function closeDrawer() {
+        activeDistrict = null;
+        document.getElementById('centersDrawer').classList.remove('open');
+        document.querySelectorAll('.district-card').forEach(c => c.classList.remove('active'));
+    }
+
+    function esc(s){ return s?(s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''; }
+
+    AOS.init();
+    init();
+    </script>
+</body>
+=======
+    <script src="./js/script.js"></script>
+    <script>
+        AOS.init();
+    </script>
+
+</body>
+
+>>>>>>> e05e199332899e9476d4c8d7f177a21a0b17fcfe
+</html>

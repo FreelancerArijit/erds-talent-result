@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Check ERDS Talent Results – Search by Candidate</title>
+    <meta name="description" content="Search and view ERDS Talent Exam results district wise. Download official result PDFs from the ERDS Talent Result portal." />
+    <link rel="canonical" href="https://talenterds.netlify.app/result.html" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="shortcut icon" href="./images/erds-logo.png" type="image/x-icon" sizes="32x32">
+    <style>
+        /* ── Year selector bar ── */
+        .year-bar {
+            background: #05056E;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .year-bar label { color: #F8D825; font-weight: 700; font-size: .95rem; margin: 0; }
+        .year-bar select {
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: .95rem;
+            font-weight: 600;
+            color: #05056E;
+            cursor: pointer;
+            min-width: 140px;
+        }
+
+        /* ── Districts grid ── */
+        .districts-section {
+            padding: 36px 20px 60px;
+            background: #f4f4fb;
+        }
+        .districts-section h2 {
+            text-align: center;
+            color: #05056E;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .districts-section .sub {
+            text-align: center;
+            color: #777;
+            font-size: .88rem;
+            margin-bottom: 32px;
+        }
+
+        /* District card */
+        .districts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .district-card {
+            background: #05056E;
+            color: white;
+            border-radius: 12px;
+            padding: 20px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background .2s, transform .2s, box-shadow .2s;
+            border: 2px solid transparent;
+            text-decoration: none;
+        }
+        .district-card:hover {
+            background: #4d4dd5;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(5,5,110,.25);
+            color: white;
+            text-decoration: none;
+        }
+        .district-card.active {
+            background: white;
+            color: #05056E;
+            border-color: #05056E;
+            box-shadow: 0 4px 16px rgba(5,5,110,.2);
+        }
+        .district-card .dname {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .district-card .dcount {
+            background: rgba(255,255,255,.2);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: .78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .district-card.active .dcount {
+            background: #e8e8f8;
+            color: #05056E;
+        }
+        .district-card.no-result {
+            opacity: .45;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        /* ── Center PDFs drawer ── */
+        .centers-drawer {
+            background: white;
+            border-radius: 14px;
+            padding: 28px;
+            margin-top: 24px;
+            box-shadow: 0 4px 20px rgba(5,5,110,.1);
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+        }
+        .centers-drawer.open { display: block; }
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .drawer-header h3 {
+            color: #05056E;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .drawer-header .close-drawer {
+            background: #f0f0f8;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 14px;
+            cursor: pointer;
+            color: #555;
+            font-size: .85rem;
+            font-weight: 600;
+        }
+        .drawer-header .close-drawer:hover { background: #e0e0f0; }
+
+        /* Center PDF cards */
+        .centers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+        .center-card {
+            background: #f8f8ff;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #e0e0f0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: box-shadow .2s, transform .2s;
+        }
+        .center-card:hover {
+            box-shadow: 0 4px 14px rgba(5,5,110,.12);
+            transform: translateY(-2px);
+        }
+        .center-card-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .cicon {
+            width: 38px;
+            height: 38px;
+            background: #ffecec;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .cicon i { color: #cc0000; font-size: 1.1rem; }
+        .cname {
+            font-size: .92rem;
+            font-weight: 700;
+            color: #05056E;
+            margin: 0;
+            line-height: 1.4;
+        }
+        .cmeta { font-size: .76rem; color: #999; }
+        .cdownload {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            background: #05056E;
+            color: white;
+            padding: 9px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: .85rem;
+            font-weight: 700;
+            transition: background .2s;
+            margin-top: auto;
+        }
+        .cdownload:hover { background: #4d4dd5; color: white; text-decoration: none; }
+
+        /* States */
+        .state-box {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+        .state-box .spinner-border { color: #05056E; }
+        .state-box i { font-size: 2.5rem; color: #ccc; margin-bottom: 12px; display: block; }
+
+        @media(max-width:600px) {
+            .districts-grid { grid-template-columns: 1fr 1fr; }
+            .centers-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="navbar">
+        <div class="nav-logo">
+            <img src="./images/erds-logo.png" alt="" class="src">
+            <div>
+                <h1>ERDS</h1>
+                <span>Educational Research and Developement Society</span>
+            </div>
+        </div>
+        <div class="nav-menu">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="result.html" style="color:#F8D825;">Results</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+                <li><span class="navbar-toggler-icon"></span></li>
+            </ul>
+        </div>
+    </header>
+
+    <marquee behavior="" direction="">
+        <h6>Talent Search Scholarship Examination Scholars List <span class="currentyear"></span></h6>
+    </marquee>
+
+    <!-- Districts + Centers -->
+    <section class="districts-section">
+        <div style="max-width:1100px;margin:0 auto;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px;margin-bottom:30px;">
+                <h2 style="margin:0;"><i class="fas fa-map-marker-alt" style="color:#cc0000;margin-right:8px;"></i><span id="districtName"></span> — Center Results</h2>
+                <a href="result.html" style="background:#05056E;color:white;border:none;border-radius:8px;padding:10px 20px;cursor:pointer;text-decoration:none;font-weight:600;display:flex;align-items:center;gap:7px;">
+                    <i class="fas fa-arrow-left"></i> Back to Districts
+                </a>
+            </div>
+        </div>
+
+        <!-- Center PDFs grid -->
+        <div id="centersContainer" style="max-width:1100px;margin:0 auto;">
+            <div class="state-box" style="grid-column:1/-1;">
+                <div class="spinner-border" role="status"></div>
+                <p style="margin-top:12px;font-size:.9rem;">Loading centers...</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-body">
+            <div class="brand-name">
+                <img src="./images/erds-logo.png" alt="" class="src">
+                <div><h6>Educational Research and development Society</h6></div>
+            </div>
+            <div class="foooter-right">
+                <div class="contact">
+                    <p>Contact no:<br>
+                        <a href="tel:+919609347900">+91 9609347900</a><br>
+                        <a href="tel:+919735880073">+91 9735880073</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="address">
+            <p>Address:<br>
+                <span>Registered office:</span> Bengai Sarat Vidyapith Building (2nd Floor), Hooghly, West Bengal. |
+                <span>Sub office:</span> Puncha Harimandirtala, Puncha, Purulia |
+                <span>Sub office:</span> Khagrabari (Chowmatha), Coochbehar
+            </p>
+        </div>
+        <div class="copyright">
+            @2025 ERDS (Educational Research and Development Society). All rights reserved.
+            Developed and maintained by <a href="https://bento.me/arijit-chattopadhyay" target="_blank">Arijit Chattopadhyay.</a>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="./config.js"></script>
+    <script src="./js/script.js"></script>
+    <script src="./js/api.js"></script>
+    <script>
+    // Get query parameters
+    function getQueryParam(name) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(name);
+    }
+
+    let selectedDistrict = '';
+    let selectedYear = '';
+
+    document.querySelectorAll('.currentyear').forEach(el => el.textContent = new Date().getFullYear());
+
+    // ── Boot ──────────────────────────────────────────────────────────────────
+    async function init() {
+        selectedDistrict = getQueryParam('district');
+        selectedYear = getQueryParam('academicYear');
+
+        if (!selectedDistrict) {
+            document.getElementById('centersContainer').innerHTML = `
+                <div class="state-box">
+                    <i class="fas fa-exclamation-circle" style="color:#dc3545;"></i>
+                    <p>No district selected. Please go back and select a district.</p>
+                    <a href="result.html" style="background:#05056E;color:white;border:none;border-radius:8px;padding:8px 18px;cursor:pointer;text-decoration:none;margin-top:8px;display:inline-block;">Back to Results</a>
+                </div>`;
+            return;
+        }
+
+        document.getElementById('districtName').textContent = selectedDistrict;
+        await loadCenters();
+    }
+
+    // ── Load center PDFs for selected district ─────────────────────────────────
+    async function loadCenters() {
+        const container = document.getElementById('centersContainer');
+        container.innerHTML = `<div class="state-box"><div class="spinner-border" role="status"></div><p style="margin-top:12px;font-size:.9rem;">Loading centers...</p></div>`;
+
+        try {
+            const params = new URLSearchParams({ district: selectedDistrict, limit: 100 });
+            if (selectedYear) params.set('academicYear', selectedYear);
+            
+            const data = await apiGet('/results?' + params);
+
+            if (!data.success || !data.data.length) {
+                container.innerHTML = `<div class="state-box"><i class="fas fa-folder-open"></i><p>No results found for ${selectedDistrict}</p></div>`;
+                return;
+            }
+
+            container.innerHTML = `<div class="centers-grid">${data.data.map(r => {
+                const url  = API_BASE.replace('/api','') + r.pdfFile.url;
+                const date = new Date(r.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+                const name = esc(r.centerName);
+                return `<div class="center-card">
+                    <div class="center-card-top">
+                        <div class="cicon"><i class="fas fa-file-pdf"></i></div>
+                        <h4 class="cname">${name}</h4>
+                    </div>
+                    <div class="cmeta"><i class="fas fa-calendar-alt"></i> ${esc(r.academicYear)} &nbsp;·&nbsp; Uploaded ${date}</div>
+                    <a href="${url}" class="cdownload" target="_blank" rel="noopener">
+                        <i class="fas fa-download"></i> Download PDF
+                    </a>
+                </div>`;
+            }).join('')}</div>`;
+
+        } catch(e) {
+            container.innerHTML = `<div class="state-box"><i class="fas fa-exclamation-triangle" style="color:#dc3545;"></i><p>Failed to load centers. Please try again.</p></div>`;
+        }
+    }
+
+    function esc(s){ return s?(s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''; }
+
+    AOS.init();
+    init();
+    </script>
+</body>
+</html>
